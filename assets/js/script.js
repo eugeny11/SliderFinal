@@ -1,76 +1,93 @@
 let images = [{
-    url: "https://img.favcars.com/mini/hatch/mini_hatch_2010_wallpapers_14_1280x960.jpg",
-    title: " Mini Cooper черный Mini Cooper черный Mini Cooper черный Mini Cooper черный Mini Cooper черный"
+    url: "./assets/img/img1.jpg",
   }, {
-    url: "https://img.favcars.com/mini/cabrio/mini_cabrio_2009_pictures_5_1280x960.jpg",
-    title: "Mini Cooper красный"
+    url: "./assets/img/img2.jpg",
   }, {
-    url: "https://www.t-r-n.ru/files/modification-images/cb/a8/5c/f9/40061_tmb940.jpg",
-    title: "Mini Cooper синий"
-  }, {
-    url: "https://i.pinimg.com/736x/c5/d9/14/c5d9142556fe74c49a2c1c2d4ea6d46a.jpg",
-    title: "Mini Cooper бордовый"
-  }, {
-    url: "https://i.pinimg.com/originals/48/01/d2/4801d29679757d8c5d5af1d02fd370a1.jpg",
-    title: "Mini Cooper белый"
-}];
+    url: "./assets/img/img3.jpg",
+  }];
 
 function initSlider(){
     if (!images || !images.length) return;
-    
 
-    let sliderImages = document.querySelector('.projects__img');
-    let sliderArrows = document.querySelector('.arrow__btn');
-    let sliderDots = document.querySelector('.projects__indicators');
+    let sliderImages = document.querySelector(".projects__content__second__col");
+    let sliderArrows = document.querySelector(".arrow__btn");
+    let sliderDots = sliderArrows.querySelector(".projects__indicators");
+    let sliderLinks = document.querySelector(".projects__navigation");
 
     initImages();
     initArrows();
-
-    if (options.dots){
     initDots();
-    }
+    initLinks();
+    initAutoplay();
 
-    if (options.autoplay){
-        initAutoplay();
-    }
 
-    function initImages() {
-        images.forEach((image, index) => {
+    function initImages(){
+      images.forEach((image,index) => {
           let imageDiv = `<div class="image n${index} ${index === 0? "active" : ""}" style="background-image:url(${images[index].url});" data-index="${index}"></div>`;
-          sliderImages.innerHTML += imageDiv;
-        });
-      };
+          sliderImages.innerHTML += imageDiv;  
+      })
+  }
 
-    function initArrows(){
-            sliderArrows.querySelectorAll(".arrow").forEach(arrow =>{
-            arrow.addEventListener("click",function(){
-                let curNumber = +sliderImages.querySelector(".active").dataset.index;
-                let nextNumber;
-                if (arrow.classList.contains("arrow-left")){
-                nextNumber = curNumber === 0? images.length - 1: curNumber - 1;
-                } else {
-                    nextNumber = curNumber === images.length - 1? 0 : curNumber + 1;
-                }
-                moveSlider(nextNumber);
-            });
-        });
-    
-    }
-
-
-    function moveSlider(num){
-        sliderImages.querySelector(".active").classList.remove("active");
-        sliderImages.querySelector(".n" + num).classList.add("active");
-        changeTitle(num);
+  function initArrows(){
+    sliderArrows.querySelectorAll(".init__arrow").forEach(arrow =>{
+        arrow.addEventListener("click",function(){
+            let curNumber = +sliderImages.querySelector(".active").dataset.index;
+            let nextNumber;
+            if (arrow.classList.contains("left")){
+            nextNumber = curNumber === 0? images.length - 1: curNumber - 1;
+            } else {
+                nextNumber = curNumber === images.length - 1? 0 : curNumber + 1;
             }
+            moveSlider(nextNumber);
+        });
+    });
 
 }
 
-let sliderOptions = {
-    dots: true,
-    autoplay: true,
-    autoplayInterval: 3000
-  };
-  
+function initDots(){
+  images.forEach((image, index) => {
+    let dot = `<div class = "indicator n${index} ${index === 0 ?"active" : ""}"
+    data-index="${index}"></div>`;
+    sliderDots.innerHTML += dot;
+  });
+  sliderDots.querySelectorAll(".indicator").forEach(dot =>{
+    dot.addEventListener("click",function(){
+      moveSlider(this.dataset.index);
+    })
+  })
+  }
 
-  document.addEventListener("DOMContentLoaded",initSlider);
+  function initLinks(){
+    images.forEach((image,index) => {
+    let link = `<a class ="projects__navigation__item__link n${index} ${index === 0 ?"active__link" : ""}"
+    data-index="${index}">Slider link ${index+1}</a>`;
+    sliderLinks.innerHTML += link;
+    });
+    sliderLinks.querySelectorAll(".projects__navigation__item__link").forEach(link =>{
+      link.addEventListener("click",function(){
+        moveSlider(this.dataset.index);
+      })
+    })
+  }
+  
+  function moveSlider(num){
+  sliderImages.querySelector(".active").classList.remove("active");
+  sliderImages.querySelector(".n" + num).classList.add("active");
+  sliderDots.querySelector(".active").classList.remove("active");
+  sliderDots.querySelector(".n" + num).classList.add("active");
+  sliderLinks.querySelector(".active__link").classList.remove("active__link");
+  sliderLinks.querySelector(".n" + num).classList.add("active__link");
+  }
+
+  function initAutoplay(){
+    setInterval(() => {
+      let curNumber = +sliderImages.querySelector(".active").dataset.index;
+      let nextNumber = curNumber === images.length - 1? 0 : curNumber + 1;
+      moveSlider(nextNumber);
+    }, 3000)
+  }
+
+}
+
+
+document.addEventListener("DOMContentLoaded",initSlider);
